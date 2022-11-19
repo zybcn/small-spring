@@ -10,6 +10,10 @@ import cn.zybcn.springframework.beans.factory.config.BeanDefinition;
  */
 public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry implements BeanFactory {
 
+    @Override
+    public <T> T getBean(String name, Class<T> requiredType) throws BeansException {
+        return (T) getBean(name);
+    }
 
     @Override
     public Object getBean(String name) throws BeansException {
