@@ -26,6 +26,8 @@ public interface ListableBeanFactory extends BeanFactory {
     /**
      * 返回注册表中所有bean的名称
      */
-    String[] getBeanDefinitionName();
+    String[] getBeanDefinitionNames();
+
+
 
 }
