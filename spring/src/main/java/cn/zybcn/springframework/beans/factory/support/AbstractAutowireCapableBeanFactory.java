@@ -6,7 +6,7 @@ import cn.zybcn.springframework.beans.BeansException;
 import cn.zybcn.springframework.beans.DisposableBean;
 import cn.zybcn.springframework.beans.PropertyValue;
 import cn.zybcn.springframework.beans.PropertyValues;
-import cn.zybcn.springframework.beans.factory.InitializingBean;
+import cn.zybcn.springframework.beans.factory.*;
 import cn.zybcn.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import cn.zybcn.springframework.beans.factory.config.BeanDefinition;
 import cn.zybcn.springframework.beans.factory.config.BeanPostProcessor;
@@ -96,6 +96,21 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 
 
     private Object initializeBean(String beanName, Object bean, BeanDefinition beanDefinition) {
+
+        //进行表示性 接口判断
+        if (bean instanceof Aware) {
+            if (bean instanceof BeanFactoryAware) {
+                ((BeanFactoryAware) bean).setBeanFactory(this);
+            }
+            if (bean instanceof BeanClassLoaderAware) {
+                ((BeanClassLoaderAware) bean).setBeanClassLoader(getBeanClassLoader());
+            }
+            if (bean instanceof BeanNameAware) {
+                ((BeanNameAware) bean).setBeanName(beanName);
+            }
+        }
+
+
         // 1. 执行 BeanPostProcessor Before 处理
         Object wrappedBean = applyBeanPostProcessorsBeforeInitialization(bean, beanName);
         try {

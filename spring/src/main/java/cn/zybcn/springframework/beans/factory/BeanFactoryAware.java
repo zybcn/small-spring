@@ -1,0 +1,14 @@
+package cn.zybcn.springframework.beans.factory;
+
+import cn.zybcn.springframework.beans.BeansException;
+
+/**
+ * @Author 程序员小张
+ * @Date 2022-12-04 11:47
+ */
+public interface BeanFactoryAware extends Aware {
+
+    void setBeanFactory(BeanFactory beanFactory) throws BeansException;
+
+
+}
