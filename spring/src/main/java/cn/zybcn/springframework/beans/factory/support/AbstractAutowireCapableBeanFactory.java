@@ -7,11 +7,7 @@ import cn.zybcn.springframework.beans.DisposableBean;
 import cn.zybcn.springframework.beans.PropertyValue;
 import cn.zybcn.springframework.beans.PropertyValues;
 import cn.zybcn.springframework.beans.factory.*;
-import cn.zybcn.springframework.beans.factory.config.AutowireCapableBeanFactory;
-import cn.zybcn.springframework.beans.factory.config.BeanDefinition;
-import cn.zybcn.springframework.beans.factory.config.BeanPostProcessor;
-import cn.zybcn.springframework.beans.factory.config.BeanReference;
-import com.sun.tools.javac.util.StringUtils;
+import cn.zybcn.springframework.beans.factory.config.*;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
@@ -76,10 +72,38 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
     }
 
 
+    protected Object resolveBeforeInstantiation(String beanName, BeanDefinition beanDefinition) {
+        Object bean = applyBeanPostProcessorsBeforeInstantiation(beanDefinition.getBeanClass(), beanName);
+        if (null != bean) {
+            bean = applyBeanPostProcessorsAfterInitialization(bean, beanName);
+        }
+        return bean;
+    }
+
+    protected Object applyBeanPostProcessorsBeforeInstantiation(Class<?> beanClass, String beanName) {
+        for (BeanPostProcessor beanPostProcessor : getBeanPostProcessors()) {
+            if (beanPostProcessor instanceof InstantiationAwareBeanPostProcessor) {
+                Object result = ((InstantiationAwareBeanPostProcessor) beanPostProcessor).postProcessBeforeInstantiation(beanClass, beanName);
+                if (null != result) {
+                    return result;
+                }
+            }
+        }
+        return null;
+    }
+
+
     @Override
     protected Object createBean(String beanName, BeanDefinition beanDefinition, Object[] args) throws BeansException {
         Object bean;
         try {
+            //判断是否返回代理的对象
+            // 判断是否返回代理 Bean 对象
+            bean = resolveBeforeInstantiation(beanName, beanDefinition);
+            if (null != bean) {
+                return bean;
+            }
+
             bean = createBeanInstance(beanDefinition, beanName, args);
             //给bean填充属性
             applyPropertyValues(beanName, bean, beanDefinition);
@@ -90,7 +114,8 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
         }
         //注册实现了DisposableBean 接口的对象
         registerDisposableBeanIfNecessary(beanName, bean, beanDefinition);
-        if(beanDefinition.isSingleton()){
+        //判断bean是否是单例
+        if (beanDefinition.isSingleton()) {
             addSingleton(beanName, bean);
         }
         return bean;
