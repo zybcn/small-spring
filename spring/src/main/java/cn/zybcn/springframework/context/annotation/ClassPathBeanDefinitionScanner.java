@@ -1,6 +1,7 @@
 package cn.zybcn.springframework.context.annotation;
 
 import cn.hutool.core.util.StrUtil;
+import cn.zybcn.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor;
 import cn.zybcn.springframework.beans.factory.config.BeanDefinition;
 import cn.zybcn.springframework.beans.factory.support.BeanDefinitionRegistry;
 import cn.zybcn.springframework.steretype.Component;
@@ -24,17 +25,18 @@ public class ClassPathBeanDefinitionScanner extends ClassPathScanningCandidateCo
         for (String basePackage : basePackages) {
 
             Set<BeanDefinition> candidates = findCandidateComponents(basePackage);
-
-
             for (BeanDefinition beanDefinition : candidates) {
 
                 String beanScope = resolveBeanScope(beanDefinition);
                 if (StrUtil.isNotEmpty(beanScope)) {
                     beanDefinition.setScope(beanScope);
                 }
-                registry.registerBeanDefinition(determineBeanName(beanDefinition),beanDefinition);
+                registry.registerBeanDefinition(determineBeanName(beanDefinition), beanDefinition);
             }
         }
+
+        // 注册处理注解的 BeanPostProcessor（@Autowired、@Value）
+        registry.registerBeanDefinition("cn.zybcn.springframework.context.annotation.internalAutowiredAnnotationProcessor", new BeanDefinition(AutowiredAnnotationBeanPostProcessor.class));
 
     }
 
@@ -49,7 +51,7 @@ public class ClassPathBeanDefinitionScanner extends ClassPathScanningCandidateCo
     }
 
 
-    private String determineBeanName(BeanDefinition beanDefinition){
+    private String determineBeanName(BeanDefinition beanDefinition) {
         Class<?> beanClass = beanDefinition.getBeanClass();
         Component component = beanClass.getAnnotation(Component.class);
         String value = component.value();

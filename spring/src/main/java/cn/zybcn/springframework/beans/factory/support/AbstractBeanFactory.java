@@ -7,6 +7,7 @@ import cn.zybcn.springframework.beans.factory.config.BeanDefinition;
 import cn.zybcn.springframework.beans.factory.config.BeanPostProcessor;
 import cn.zybcn.springframework.beans.factory.config.ConfigurableBeanFactory;
 import cn.zybcn.springframework.util.ClassUtils;
+import cn.zybcn.springframework.util.StringValueResolver;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +29,12 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegisterSupport imp
      */
     private final List<BeanPostProcessor> beanPostProcessors = new ArrayList<>();
 
+
+    /**
+     * String resolvers to apply e.g. to annotation attribute values
+     */
+    private final List<StringValueResolver> embeddedValueResolvers = new ArrayList<>();
+
     @Override
     public <T> T getBean(String name, Class<T> requiredType) throws BeansException {
         return (T) getBean(name);
@@ -41,6 +48,21 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegisterSupport imp
     @Override
     public Object getBean(String name, Object... args) throws BeansException {
         return doGetBean(name, args);
+    }
+
+
+    @Override
+    public void addEmbeddedValueResolver(StringValueResolver valueResolver) {
+        this.embeddedValueResolvers.add(valueResolver);
+    }
+
+    @Override
+    public String resolveEmbeddedValue(String value) {
+        String result = value;
+        for (StringValueResolver resolver : this.embeddedValueResolvers) {
+            result = resolver.resolveStringValue(result);
+        }
+        return result;
     }
 
     protected <T> T doGetBean(final String name, final Object[] args) {

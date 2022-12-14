@@ -22,6 +22,7 @@ import java.util.Map;
 public abstract class AbstractApplicationContext extends DefaultResourceLoader implements ConfigurableApplicationContext {
 
 
+
     public static final String APPLICATION_EVENT_MULTICASTER_BEAN_NAME = "applicationEventMulticaster";
 
     private ApplicationEventMulticaster applicationEventMulticaster;
@@ -136,6 +137,12 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader i
     @Override
     public void close() {
         getBeanFactory().destroySingletons();
+    }
+
+
+    @Override
+    public <T> T getBean(Class<T> requiredType) throws BeansException {
+        return getBeanFactory().getBean(requiredType);
     }
 
 
