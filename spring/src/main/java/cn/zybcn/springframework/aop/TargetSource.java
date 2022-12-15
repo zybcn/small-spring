@@ -1,5 +1,7 @@
 package cn.zybcn.springframework.aop;
 
+import cn.zybcn.springframework.util.ClassUtils;
+
 /**
  * @Author 程序员小张
  * @Date 2022-12-10 21:05
@@ -20,7 +22,9 @@ public class TargetSource {
      * @return the type of targets returned by this {@link TargetSource}
      */
     public Class<?>[] getTargetClass() {
-        return this.target.getClass().getInterfaces();
+        Class<?> clazz = this.target.getClass();
+        clazz = ClassUtils.isCglibProxyClass(clazz) ? clazz.getSuperclass() : clazz;
+        return clazz.getInterfaces();
     }
 
     /**
