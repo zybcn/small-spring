@@ -3,7 +3,7 @@ package cn.zybcn.springframework.beans.factory.support;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.zybcn.springframework.beans.BeansException;
-import cn.zybcn.springframework.beans.DisposableBean;
+import cn.zybcn.springframework.beans.factory.DisposableBean;
 import cn.zybcn.springframework.beans.PropertyValue;
 import cn.zybcn.springframework.beans.PropertyValues;
 import cn.zybcn.springframework.beans.factory.*;

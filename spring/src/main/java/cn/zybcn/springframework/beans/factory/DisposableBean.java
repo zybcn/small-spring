@@ -1,4 +1,4 @@
-package cn.zybcn.springframework.beans;
+package cn.zybcn.springframework.beans.factory;
 
 /**
  * @Author 程序员小张

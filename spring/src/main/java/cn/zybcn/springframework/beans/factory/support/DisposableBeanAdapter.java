@@ -2,7 +2,7 @@ package cn.zybcn.springframework.beans.factory.support;
 
 import cn.hutool.core.util.StrUtil;
 import cn.zybcn.springframework.beans.BeansException;
-import cn.zybcn.springframework.beans.DisposableBean;
+import cn.zybcn.springframework.beans.factory.DisposableBean;
 import cn.zybcn.springframework.beans.factory.config.BeanDefinition;
 
 import java.lang.reflect.Method;
