@@ -8,6 +8,7 @@ import cn.zybcn.springframework.context.ApplicationEvent;
 import cn.zybcn.springframework.context.ApplicationListener;
 import cn.zybcn.springframework.context.ConfigurableApplicationContext;
 import cn.zybcn.springframework.context.event.ApplicationEventMulticaster;
+import cn.zybcn.springframework.context.event.ContextClosedEvent;
 import cn.zybcn.springframework.context.event.ContextRefreshedEvent;
 import cn.zybcn.springframework.context.event.SimpleApplicationEventMulticaster;
 import cn.zybcn.springframework.core.io.DefaultResourceLoader;
@@ -20,7 +21,6 @@ import java.util.Map;
  * @Date 2022-11-24 22:46
  */
 public abstract class AbstractApplicationContext extends DefaultResourceLoader implements ConfigurableApplicationContext {
-
 
 
     public static final String APPLICATION_EVENT_MULTICASTER_BEAN_NAME = "applicationEventMulticaster";
@@ -148,6 +148,10 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader i
 
     @Override
     public void registerShutdownHook() {
+
+        // 发布容器关闭事件
+        publishEvent(new ContextClosedEvent(this));
+
         Runtime.getRuntime().addShutdownHook(new Thread(this::close));
     }
 }
